@@ -1,0 +1,6 @@
+Type,Death,Water,Fire,Earth,Wind
+Death,1,1.5,1.25,1,1
+Water,1,1,1.5,1.25,1
+Fire,1,1,1,1.5,1.25
+Earth,1.25,1,1,1,1.5
+Wind,1.5,1.25,1,1,1
