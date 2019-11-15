@@ -9,13 +9,11 @@ MONSTERDATA = 'monsterdata.csv'
 
 class Monster:
 
-    min_hp_per_level = 6
-    max_hp_per_level = 10
+    MIN_HP_PER_LEVEL = 6
+    MAX_HP_PER_LEVEL = 10
 
-    base_dmg = 4
-    base_defense = 4
-
-    base_attack_modifier = .5
+    BASE_DMG = 4
+    BASE_DEFENSE = 4
 
     # Can these functions be moved somewhere more appropriate?
     def load_modifiers() -> defaultdict:
@@ -44,7 +42,7 @@ class Monster:
 
     monster_list = load_monsters()
 
-    def __init__(self, name: str, description: str, element: str, tier: int = 1 , level: int = 1, rarity: str = 'Common', strength: int = 1, defense: int = 1):
+    def __init__(self, name: str, element: str, description: str = '', tier: int = 1 , level: int = 1, rarity: str = 'Common', strength: int = 1, defense: int = 1):
         # Basic information
         self.name = name
         self.description = description
@@ -61,11 +59,11 @@ class Monster:
         self.strength = int(strength)
         self.defense = int(defense)
 
-        self.attack = self.base_dmg * self.strength + self.level
-        self.armor = self.base_defense * self.defense
+        self.attack = self.BASE_DMG * self.strength + self.level
+        self.armor = self.BASE_DEFENSE * self.defense
 
         # Hit Points
-        self.hp = sum(random.randint(self.min_hp_per_level, self.max_hp_per_level) for _ in range(self.level))
+        self.hp = sum(random.randint(self.MIN_HP_PER_LEVEL, self.MAX_HP_PER_LEVEL) for _ in range(self.level))
 
     @classmethod
     def random_monster(self):
@@ -95,6 +93,7 @@ class Monster:
         return f'{self.name}'
 
     def attack_target(self, target) -> bool:
+        # Sourced from Tamer's Tale
         return round(sum(random.randint(1,self.attack) for _ in range(self.tier)) + (self.attack * float(self.element_modifiers[self.element][target.element])) + self.level - target.armor)
 
     @staticmethod
