@@ -17,6 +17,8 @@ class Monster:
 
     # Can these functions be moved somewhere more appropriate?
     def load_modifiers() -> defaultdict:
+        """Load element modifiers from provided csv"""
+        
         mods = defaultdict(dict)
 
         with open(DMGMODIFIERS) as fp:
@@ -32,6 +34,8 @@ class Monster:
 
     # Can these functions be moved somewhere more appropriate?
     def load_monsters() -> defaultdict:
+        """Load monsters from provided csv"""
+
         monsters = defaultdict(list)
 
         with open(MONSTERDATA) as fp:
@@ -64,9 +68,12 @@ class Monster:
 
         # Hit Points
         self.hp = sum(random.randint(self.MIN_HP_PER_LEVEL, self.MAX_HP_PER_LEVEL) for _ in range(self.level))
+        self.current_hp = self.hp
 
     @classmethod
     def random_monster(self):
+        """ Return a random monster from the monster_list taking rarity into consideration"""
+
         # Hardcode a distribution here because I can't figure out a better way
         # distribution = [len(cls.monster_list[key]) for key in cls.monster_list.keys()]
         distribution = [80, 16, 4]
@@ -76,6 +83,9 @@ class Monster:
 
     @classmethod
     def random_monster_filter(self, rarity: str = 'Common', element: str = None):
+        """Given a rarity, which defaults to 'Common', and an optional element type
+           return a monster from the monster_list"""
+
         if rarity in self.available_rarities():
             if element and element in self.available_elements():
                 filtered_monsters = [monster for monster in self.monster_list[rarity] if monster['element'] == element]
@@ -93,13 +103,19 @@ class Monster:
         return f'{self.name}'
 
     def attack_target(self, target) -> bool:
+        """Return the amount of damage inflicted to 'target' based upon monster and target's stats and element"""
+
         # Sourced from Tamer's Tale
         return round(sum(random.randint(1,self.attack) for _ in range(self.tier)) + (self.attack * float(self.element_modifiers[self.element][target.element])) + self.level - target.armor)
 
     @staticmethod
     def available_rarities() -> list:
+        """Helper function to provide access to the list of rarities provided by the loaded csv"""
+
         return list(Monster.monster_list.keys())
 
     @staticmethod
     def available_elements() -> list:
+        """Helper function to provide access to the list of elements provided by the loaded csv"""
+
         return list(Monster.element_modifiers.keys())

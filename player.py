@@ -11,6 +11,7 @@ class Player:
 
     @classmethod
     def interactive(self):
+        """Provide interactive constructor for player class"""
         while True:
             try:
                 name = input("Please enter a name for your adventure: ")
@@ -18,19 +19,25 @@ class Player:
                 if name.lower() == 'quit':
                     exit()
 
-                print(f"\nWelcome, {name}!  Now it's time to select your monsterly companion...")
-                print()
+                print(f"\nWelcome, {name}!  Now it's time to select your monsterly companion...\n")
 
                 monster = self.select_monster()
                 print(f'\nYou have selected the {monster.name}!')
 
                 if name and monster:
                         return self(name, monster)
+            
+            except KeyboardInterrupt:
+                quit()
+            
             except:
-                continue
+                pass
 
     @staticmethod
     def select_monster():
+        """Provide interactive interface for user to choose from three randomly selected
+           'Common' rarity monsters"""
+
         # Select the three elements for the player and generate those monsters
         monster_data = [Monster.random_monster_filter('Common', element) for element in random.sample(Monster.available_elements(), 3)]
 
@@ -39,7 +46,7 @@ class Player:
         row_titles = ['Name', 'Element', None, 'Attack', 'Defense', 'Hit Points']
 
         # Define the table header formatting and render the table
-        row_format ="{:<11} " + "{:^25}" * (len(column_titles))
+        row_format ="{:<10} " + "{:^20}" * (len(column_titles))
         print(row_format.format("", *column_titles))
         print()
 
@@ -58,11 +65,12 @@ class Player:
         print()
 
         while True:
-            response = input("Please choose a companion (Enter a number between 1 and 3 that corresponds with your selection): ")
+            response = input("Please enter the number of your chosen companion: ")
 
             if response.isnumeric() and 1 <= int(response) <= 3:
                 return monster_data[int(response) - 1]
             elif response.lower() == 'quit':
                 exit()
             else:
+                print('Enter a number between 1 and 3 that corresponds with your selection.')
                 continue
