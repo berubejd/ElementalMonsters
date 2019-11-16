@@ -18,7 +18,7 @@ class Monster:
     # Can these functions be moved somewhere more appropriate?
     def load_modifiers() -> defaultdict:
         """Load element modifiers from provided csv"""
-        
+
         mods = defaultdict(dict)
 
         with open(DMGMODIFIERS) as fp:
@@ -52,7 +52,7 @@ class Monster:
         self.description = description
         self.element = element
         self.rarity = rarity
-        self.tier = tier
+        self.tier = int(tier)
 
         # Level and Experience
         self.level = int(level)
@@ -102,11 +102,27 @@ class Monster:
     def __repr__(self):
         return f'{self.name}'
 
-    def attack_target(self, target) -> bool:
+    def attack_target(self, target) -> int:
         """Return the amount of damage inflicted to 'target' based upon monster and target's stats and element"""
 
         # Sourced from Tamer's Tale
         return round(sum(random.randint(1,self.attack) for _ in range(self.tier)) + (self.attack * float(self.element_modifiers[self.element][target.element])) + self.level - target.armor)
+
+    def damage_taken(self, dmg_amount: int) -> None:
+        """Track and determine the affects of damage taken"""
+        pass
+
+    def healing(self, healing_amount: int) -> None:
+        """Heal damage that may have been taken previously"""
+        pass
+
+    def gain_xp(self, xp: int) -> None:
+        """Award monster experience and handle triggering of leveling"""
+        pass
+
+    def level_up(self) -> None:
+        """Handle monster progression that occurs with leveling up"""
+        pass
 
     @staticmethod
     def available_rarities() -> list:
