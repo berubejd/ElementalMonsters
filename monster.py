@@ -57,13 +57,13 @@ class Monster:
         # Level and Experience
         self.level = int(level)
         self.experience = 0
-        self.experience_needed = int(level ** 1.8 + level * 4 + 8)  # Source GDquest
+        self.experience_needed = self.get_experience_needed(int(level) + 1)
 
         # Strength - Attack and Defense - Armor
         self.strength = int(strength)
         self.defense = int(defense)
 
-        self.attack = self.BASE_DMG * self.strength + self.level
+        self.attack = self.BASE_DMG * self.strength
         self.armor = self.BASE_DEFENSE * self.defense
 
         # Hit Points
@@ -71,7 +71,7 @@ class Monster:
         self.current_hp = self.hp
 
     @classmethod
-    def random_monster(self):
+    def random_monster(self, level: int = 1):
         """ Return a random monster from the monster_list taking rarity into consideration"""
 
         # Hardcode a distribution here because I can't figure out a better way
@@ -79,10 +79,10 @@ class Monster:
         distribution = [80, 16, 4]
         rarity = random.choices(self.available_rarities(), weights=distribution)[0]
 
-        return self(**random.choice(self.monster_list[rarity]))
+        return self(**random.choice(self.monster_list[rarity]), level=level)
 
     @classmethod
-    def random_monster_filter(self, rarity: str = 'Common', element: str = None):
+    def random_monster_filter(self, rarity: str = 'Common', element: str = None, level: int = 1):
         """Given a rarity, which defaults to 'Common', and an optional element type
            return a monster from the monster_list"""
 
@@ -95,7 +95,7 @@ class Monster:
                 else:
                     raise ValueError('This combination of rarity and element does not exist.')
             else:
-               monster = random.choice(self.monster_list[rarity])
+               monster = random.choice(self.monster_list[rarity], level = 1)
 
         return self(**monster)
 
@@ -108,21 +108,60 @@ class Monster:
         # Sourced from Tamer's Tale
         return round(sum(random.randint(1,self.attack) for _ in range(self.tier)) + (self.attack * float(self.element_modifiers[self.element][target.element])) + self.level - target.armor)
 
-    def damage_taken(self, dmg_amount: int) -> None:
+    def damage_taken(self, dmg_amount: int) -> int:
         """Track and determine the affects of damage taken"""
-        pass
 
-    def healing(self, healing_amount: int) -> None:
+        self.current_hp = max(self.current_hp - dmg_amount, 0)
+
+        return self.current_hp
+
+    def healing(self, healing_amount: int) -> int:
         """Heal damage that may have been taken previously"""
-        pass
+        
+        self.current_hp = min(self.current_hp + healing_amount, self.hp)
 
-    def gain_xp(self, xp: int) -> None:
-        """Award monster experience and handle triggering of leveling"""
-        pass
+        return self.current_hp
+
+    def gain_xp(self, xp: int) -> bool:
+        """Award monster experience and handle triggering of leveling. Return True if monster has leveled up."""
+
+        leveled = False
+
+        self.experience += xp
+
+        if self.level == 10:
+            # Max level has been reached so no reason to continue
+            return
+        else:
+            while self.experience >= self.experience_needed:
+                self.experience -= self.experience_needed
+                self.level_up()
+
+                leveled = True
+
+        return leveled
 
     def level_up(self) -> None:
         """Handle monster progression that occurs with leveling up"""
-        pass
+
+        # Adjust level and experience requirement for next level
+        self.level += 1
+
+        # Tidy up experience if max level (level 10)
+        if self.level == 10:
+            self.experience = 0
+
+        self.experience_needed = self.get_experience_needed(self.level + 1)
+
+        # Adjust level based stats
+        self.hp += random.randint(self.MIN_HP_PER_LEVEL, self.MAX_HP_PER_LEVEL)
+        self.current_hp = self.hp
+
+    @staticmethod
+    def get_experience_needed(level:int) -> int:
+        """Calculate the experience required to gain a level - Source GDQuest"""
+
+        return int(level ** 1.8 + level * 4 + 8)
 
     @staticmethod
     def available_rarities() -> list:

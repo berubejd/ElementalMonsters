@@ -67,7 +67,7 @@ def hunting_loop(player: Player) -> tuple:
     wins = 0
     hunt = True
 
-    battle_message = f"You and your companion creep through the dense underbrush and come upon"
+    battle_message = f"You and your monster creep through the dense underbrush and come upon"
 
     clear_screen()
 
@@ -78,17 +78,26 @@ def hunting_loop(player: Player) -> tuple:
             print('.', end='', flush=True)
             sleep(1)
 
+        print('\n')
+
         if random.randint(1, 100) < 5:
-            print(" Nothing.")
+            print(f'{"Nothing":^60}\n')
+
         else:
             battles += 1
-            monster = Monster.random_monster()
+            min_level = max(player.monster.level - 2, 1)
+            max_level = min(player.monster.level + 1, 10)
+            monster = Monster.random_monster(level=random.randint(min_level, max_level))
 
-            print(f' a level {monster.level} wild {monster.rarity.lower()} ({monster.element}) {monster.name}!\n')
+            line = f'{"An" if monster.rarity[0].lower() in "aeiou" else "A"} {monster.rarity.lower()} level {monster.level} {monster.name}!\n'
+            print(line.center(60))
 
             if player.monster.attack_target(monster) > monster.attack_target(player.monster):
-                wins += 1
                 print(f'Your {player.monster.name} fought heroically and was victorious!\n')
+
+                wins += 1
+                if player.monster.gain_xp(5):
+                    print(f'*** Your monster has grown stronger! ***\n')
             else:
                 print('You are lucky to make it away! That monster was tougher than it looked...\n')
 
@@ -96,7 +105,7 @@ def hunting_loop(player: Player) -> tuple:
 
         while not response in ['c', 'q']:
             try:
-                response = input('Would you like to (C)ontinue hunting or (Q)uit and return to town? ')
+                response = input('Would you like to (C)ontinue hunting or (Q)uit for to town? ')
                 response = response.lower()
 
             except KeyboardInterrupt:
@@ -108,6 +117,10 @@ def hunting_loop(player: Player) -> tuple:
         print()
 
         if response == 'q':
+            bounty = wins * 5
+            player.gold += bounty
+            print(f'You have earned {bounty} gold in bounties!')
+            sleep(3)
             hunt = False
 
     return (wins, battles)
@@ -131,6 +144,7 @@ def monster_info(player) -> None:
     rookery_text = f'You step across the threshold into a dimly lit rookery.  All around you are stalls occupied by monsters from all across the realm.  Off to one side you can hear the familiar sound of your {monster.name}...'
     complex_element = f'{monster.element} ({monster.rarity})'
     current_hp = f'{monster.current_hp} / {monster.hp}'
+    current_xp = f'{monster.experience} / {monster.experience_needed}'
     menu = (
         f'Everlook Rookery\n'
         f'\n'
@@ -139,6 +153,8 @@ def monster_info(player) -> None:
         f'{indent}Name:       {monster.name:>20}\n'
         f'{indent}Element:    {complex_element:>20}\n'
         f'\n'
+        f'{indent}Level:      {monster.level:>20}\n'
+        f'{indent}Experience: {current_xp:>20}\n'
         f'{indent}Attack:     {monster.attack:>20}\n'
         f'{indent}Defense:    {monster.defense:>20}\n'
         f'{indent}Hit Points: {current_hp:>20}\n'
