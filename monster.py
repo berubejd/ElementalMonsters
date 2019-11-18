@@ -106,17 +106,18 @@ class Monster:
         """Return the amount of damage inflicted to 'target' based upon monster and target's stats and element"""
 
         # Sourced from Tamer's Tale
-        return round(sum(random.randint(1,self.attack) for _ in range(self.tier)) + (self.attack * float(self.element_modifiers[self.element][target.element])) + self.level - target.armor)
+        # return round(sum(random.randint(1,self.attack) for _ in range(self.tier)) + (self.attack * float(self.element_modifiers[self.element][target.element])) + self.level - target.armor)
+        return max(0, round((sum(random.randint(1,self.attack) for _ in range(self.tier)) * float(self.element_modifiers[self.element][target.element])) + self.level - target.armor))
 
     def damage_taken(self, dmg_amount: int) -> int:
-        """Track and determine the affects of damage taken"""
+        """Track and determine the affects of damage taken returning remaining hit points"""
 
         self.current_hp = max(self.current_hp - dmg_amount, 0)
 
         return self.current_hp
 
     def healing(self, healing_amount: int) -> int:
-        """Heal damage that may have been taken previously"""
+        """Heal damage that may have been taken previously and return adjusted hit points"""
         
         self.current_hp = min(self.current_hp + healing_amount, self.hp)
 

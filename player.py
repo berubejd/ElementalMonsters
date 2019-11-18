@@ -43,7 +43,7 @@ class Player:
 
         # Set up the column and row values
         column_titles = ['Monster 1', ' Monster 2', 'Monster 3']
-        row_titles = ['Name', 'Element', None, 'Attack', 'Defense', 'Hit Points']
+        row_titles = ['Name', 'Element', None, 'Attack', 'Armor', 'Hit Points']
 
         # Define the table header formatting and render the table
         row_format ="{:<10} " + "{:^20}" * (len(column_titles))
@@ -55,7 +55,7 @@ class Player:
                 print()
             else:
                 if row == 'Hit Points':
-                    row = 'hp'
+                    row = 'HP'
 
                 if row == 'Element':
                     print(row_format.format(f'{row}:', *[f'{monster.element} ({monster.rarity})' for monster in monster_data]))
