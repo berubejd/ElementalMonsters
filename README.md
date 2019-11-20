@@ -11,3 +11,12 @@ A simple monster battler using a 5 element rock, paper, scissor inspired system.
 A visual representation of their interation is below:
 
 ![Interactions](types.png)
+
+## TODO
+
+ - [ ] Draw if missed three times in a row by both monsters *May no longer be necessary?*
+ - [ ] Save / Load
+ - [ ] Buff implementation
+ - [ ] Block 0 health pets from going to hunt
+
+ - [x] Complete re-implementation of combat system

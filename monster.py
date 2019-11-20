@@ -3,6 +3,7 @@
 import csv
 import random
 from collections import defaultdict
+from math import trunc
 
 DMGMODIFIERS = 'dmgmodifiers.csv'
 MONSTERDATA = 'monsterdata.csv'
@@ -12,8 +13,10 @@ class Monster:
     MIN_HP_PER_LEVEL = 6
     MAX_HP_PER_LEVEL = 10
 
-    BASE_DMG = 4
-    BASE_DEFENSE = 4
+    # BASE_DMG = 4
+    BASE_DMG = 6
+    # BASE_DEFENSE = 4
+    BASE_DEFENSE = 10
 
     # Can these functions be moved somewhere more appropriate?
     def load_modifiers() -> defaultdict:
@@ -63,8 +66,12 @@ class Monster:
         self.strength = int(strength)
         self.defense = int(defense)
 
-        self.attack = self.BASE_DMG * self.strength
-        self.armor = self.BASE_DEFENSE * self.defense
+        self.str_mod = trunc((self.strength - 10) / 2)
+
+        # self.attack = self.BASE_DMG * self.strength
+        self.attack = self.BASE_DMG + self.str_mod
+        # self.armor = self.BASE_DEFENSE * self.defense
+        self.armor = self.BASE_DEFENSE + self.defense
 
         # Hit Points
         self.hp = sum(random.randint(self.MIN_HP_PER_LEVEL, self.MAX_HP_PER_LEVEL) for _ in range(self.level))
@@ -107,7 +114,12 @@ class Monster:
 
         # Sourced from Tamer's Tale
         # return round(sum(random.randint(1,self.attack) for _ in range(self.tier)) + (self.attack * float(self.element_modifiers[self.element][target.element])) + self.level - target.armor)
-        return max(0, round((sum(random.randint(1,self.attack) for _ in range(self.tier)) * float(self.element_modifiers[self.element][target.element])) + self.level - target.armor))
+
+        # Modified Tamer's Tale
+        # return max(0, round((sum(random.randint(1,self.attack) for _ in range(self.tier)) * float(self.element_modifiers[self.element][target.element])) + self.level - target.armor))
+
+        # Bases loosely on Basic D&D 5.1
+        return max(0, round((sum(random.randint(1,self.attack) for _ in range(self.tier)) * float(self.element_modifiers[self.element][target.element])))) if random.randint(1, 20) + self.str_mod > target.armor else 0
 
     def damage_taken(self, dmg_amount: int) -> int:
         """Track and determine the affects of damage taken returning remaining hit points"""
@@ -157,6 +169,10 @@ class Monster:
         # Adjust level based stats
         self.hp += random.randint(self.MIN_HP_PER_LEVEL, self.MAX_HP_PER_LEVEL)
         self.current_hp = self.hp
+
+        self.strength += 1
+        self.str_mod = trunc((self.strength - 10) / 2)
+        self.attack = self.BASE_DMG + self.str_mod
 
     @staticmethod
     def get_experience_needed(level:int) -> int:
