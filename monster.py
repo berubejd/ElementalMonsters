@@ -13,9 +13,7 @@ class Monster:
     MIN_HP_PER_LEVEL = 6
     MAX_HP_PER_LEVEL = 10
 
-    # BASE_DMG = 4
     BASE_DMG = 6
-    # BASE_DEFENSE = 4
     BASE_DEFENSE = 8
 
     # Can these functions be moved somewhere more appropriate?
@@ -68,9 +66,7 @@ class Monster:
 
         self.str_mod = trunc((self.strength - 10) / 2)
 
-        # self.attack = self.BASE_DMG * self.strength
         self.attack = self.BASE_DMG + self.str_mod
-        # self.armor = self.BASE_DEFENSE * self.defense
         self.armor = self.BASE_DEFENSE + self.defense
 
         # Hit Points
@@ -111,12 +107,6 @@ class Monster:
 
     def attack_target(self, target) -> int:
         """Return the amount of damage inflicted to 'target' based upon monster and target's stats and element"""
-
-        # Sourced from Tamer's Tale
-        # return round(sum(random.randint(1,self.attack) for _ in range(self.tier)) + (self.attack * float(self.element_modifiers[self.element][target.element])) + self.level - target.armor)
-
-        # Modified Tamer's Tale
-        # return max(0, round((sum(random.randint(1,self.attack) for _ in range(self.tier)) * float(self.element_modifiers[self.element][target.element])) + self.level - target.armor))
 
         # Bases loosely on Basic D&D 5.1
         return max(0, round((sum(random.randint(1,self.attack) for _ in range(self.tier)) * float(self.element_modifiers[self.element][target.element])))) if random.randint(1, 20) + self.str_mod > target.armor else 0
