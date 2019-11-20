@@ -16,7 +16,7 @@ class Monster:
     # BASE_DMG = 4
     BASE_DMG = 6
     # BASE_DEFENSE = 4
-    BASE_DEFENSE = 10
+    BASE_DEFENSE = 8
 
     # Can these functions be moved somewhere more appropriate?
     def load_modifiers() -> defaultdict:

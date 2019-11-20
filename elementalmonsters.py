@@ -35,7 +35,7 @@ def present_town_menu(player: Player) -> str:
     menu = (
         f'Welcome to the town of Everlook!\n'
         f'\n'
-        f'{textwrap.fill(town_description, width=60)}\n'
+        f'{textwrap.fill(town_description, width=70)}\n'
         f'\n'
         f'{indent}(H)unt for local monsters\n'
         f'{indent}(V)isit the healers of the local sanctuary\n'
@@ -116,13 +116,13 @@ def hunting(player: Player) -> tuple:
         # Determine if the player would like to continue (default to 'q' if the player's monster is out of health)
         response = 'q' if result == 'Lost' else None
 
-        while not response in [ 'c', 'q' ]:
+        while not response in [ 'h', 'q' ]:
             try:
                 current_hp = f'{player.monster.current_hp} / {player.monster.hp}'
                 current_xp = f'{player.monster.experience} / {player.monster.experience_needed}'
 
                 print(f'\n[ {player.monster.name} - Level: {player.monster.level} - Exp: {current_xp} - Health: {current_hp} ]')
-                response = input('Would you like to (C)ontinue hunting or (Q)uit for town? ')
+                response = input('Would you like to continue (H)unting or (Q)uit for town? ')
                 response = response.lower()
 
             except KeyboardInterrupt:
@@ -240,7 +240,7 @@ def healer(player: Player) -> None:
     menu = (
         f'Santuary of the Blind God\n'
         f'\n'
-        f'{textwrap.fill(healing_text, width=60)}\n'
+        f'{textwrap.fill(healing_text, width=70)}\n'
         f'\n'
         f'{"Just being in this place you and your companion feel more rested." if player.monster.current_hp < player.monster.hp else ""}\n'
         f'{"You are unable to afford their blessings..." if player.gold < 100 else "A figure can barely be seen but beckonds you forward."}\n'
@@ -265,7 +265,7 @@ def monster_info(player) -> None:
     menu = (
         f'Everlook Stables\n'
         f'\n'
-        f'{textwrap.fill(stable_text, width=60)}\n'
+        f'{textwrap.fill(stable_text, width=70)}\n'
         f'\n'
         f'{indent}Name:       {monster.name:>20}\n'
         f'{indent}Element:    {complex_element:>20}\n'
@@ -303,6 +303,11 @@ def main():
             exit()
 
         if action == 'h':
+            if player.monster.current_hp == 0:
+                print(f'\nYour {player.monster.name} needs some rest.\nMaybe a (v)isit to the healer will help get them ready for the hunt? ', end='')
+                sleep(3)
+                continue
+
             wins, total = hunting(player)
 
             player_battles += total

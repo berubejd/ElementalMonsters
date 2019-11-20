@@ -17,6 +17,7 @@ A visual representation of their interation is below:
  - [ ] Draw if missed three times in a row by both monsters *May no longer be necessary?*
  - [ ] Save / Load
  - [ ] Buff implementation
- - [ ] Block 0 health pets from going to hunt
+ - [x] Block 0 health pets from going to hunt
+ - [ ] Make initial monster selection and stables view consistent
 
  - [x] Complete re-implementation of combat system
