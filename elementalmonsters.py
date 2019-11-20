@@ -273,7 +273,7 @@ def monster_info(player) -> None:
         f'{indent}Level:      {monster.level:>20}\n'
         f'{indent}Experience: {current_xp:>20}\n'
         f'\n'
-        f'{indent}Attack:     {monster.attack:>20}\n'
+        f'{indent}Strength:   {monster.strength:>20}\n'
         f'{indent}Defense:    {monster.defense:>20}\n'
         f'{indent}Hit Points: {current_hp:>20}\n'
     )

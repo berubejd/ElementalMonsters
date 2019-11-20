@@ -18,6 +18,6 @@ A visual representation of their interation is below:
  - [ ] Save / Load
  - [ ] Buff implementation
  - [x] Block 0 health pets from going to hunt
- - [ ] Make initial monster selection and stables view consistent
+ - [x] Make initial monster selection and stables view consistent
 
  - [x] Complete re-implementation of combat system
