@@ -21,7 +21,7 @@ A visual representation of their interation is below:
  - [x] Block 0 health pets from going to hunt
  - [x] Make initial monster selection and stables view consistent
  - [x] Complete re-implementation of combat system
- - [ ] Enable player to capture defeated monsters
+ - [x] Enable player to capture defeated monsters
  - [x] Save at additional places in the game loop (After creation, leveling up, returning from hunting)
  
  Also:

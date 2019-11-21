@@ -111,11 +111,11 @@ def hunting(player: Player) -> tuple:
             sleep(3)
             result = combat(player, monster)
 
-        if result == 'Won':
+        if result == 'Won' or result == 'Captured':
             wins += 1
 
         # Determine if the player would like to continue (default to 'q' if the player's monster is out of health)
-        response = 'q' if result == 'Lost' else None
+        response = 'q' if result == 'Lost' or result == 'Captured' else None
 
         while not response in [ 'h', 'q' ]:
             try:
@@ -199,6 +199,25 @@ def combat(player: Player, monster: Monster) -> str:
 
                 if monster.damage_taken(damage) == 0:
                     print(f' and defeated it!')
+
+                    response = None
+
+                    while not response in [ 'y', 'n' ]:
+                        try:
+                            response = input(f'\nWould you like to capture this monster to replace your {companion.name}? (Y/N) ')
+                            response = response.lower()
+
+                        except KeyboardInterrupt:
+                            sys.exit()
+                            
+                        except:
+                            pass
+
+                        if response == 'y':
+                            player.monster = monster
+                            print(f'Let\'s head back to town with your new {player.monster.name} for some rest.')
+
+                            return 'Captured'
 
                     if player.monster.gain_xp(5):
                         print(f'\nCongratulations! Your monster has grown stronger!')

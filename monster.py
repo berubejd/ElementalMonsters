@@ -14,7 +14,7 @@ class Monster:
     MAX_HP_PER_LEVEL = 10
 
     BASE_DMG = 6
-    BASE_DEFENSE = 8
+    BASE_DEFENSE = 6
 
     # Can these functions be moved somewhere more appropriate?
     def load_modifiers() -> defaultdict:
@@ -61,7 +61,7 @@ class Monster:
         self.experience_needed = self.get_experience_needed(int(level) + 1)
 
         # Strength - Attack and Defense - Armor
-        self.strength = int(strength)
+        self.strength = int(strength) + trunc(int(level) / 2)
         self.defense = int(defense)
 
         self.str_mod = trunc((self.strength - 10) / 2)
@@ -157,12 +157,15 @@ class Monster:
         self.experience_needed = self.get_experience_needed(self.level + 1)
 
         # Adjust level based stats
+
         self.hp += random.randint(self.MIN_HP_PER_LEVEL, self.MAX_HP_PER_LEVEL)
         self.current_hp = self.hp
 
-        self.strength += 1
-        self.str_mod = trunc((self.strength - 10) / 2)
-        self.attack = self.BASE_DMG + self.str_mod
+        # Strength is adjusted every other level
+        if self.level % 2 == 0:
+            self.strength += 1
+            self.str_mod = trunc((self.strength - 10) / 2)
+            self.attack = self.BASE_DMG + self.str_mod
 
     @staticmethod
     def get_experience_needed(level:int) -> int:
