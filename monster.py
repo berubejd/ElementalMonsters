@@ -74,33 +74,33 @@ class Monster:
         self.current_hp = self.hp
 
     @classmethod
-    def random_monster(self, level: int = 1):
+    def random_monster(cls, level: int = 1):
         """ Return a random monster from the monster_list taking rarity into consideration"""
 
         # Hardcode a distribution here because I can't figure out a better way
         # distribution = [len(cls.monster_list[key]) for key in cls.monster_list.keys()]
         distribution = [80, 16, 4]
-        rarity = random.choices(self.available_rarities(), weights=distribution)[0]
+        rarity = random.choices(cls.available_rarities(), weights=distribution)[0]
 
-        return self(**random.choice(self.monster_list[rarity]), level=level)
+        return cls(**random.choice(cls.monster_list[rarity]), level=level)
 
     @classmethod
-    def random_monster_filter(self, rarity: str = 'Common', element: str = None, level: int = 1):
+    def random_monster_filter(cls, rarity: str = 'Common', element: str = None, level: int = 1):
         """Given a rarity, which defaults to 'Common', and an optional element type
            return a monster from the monster_list"""
 
-        if rarity in self.available_rarities():
-            if element and element in self.available_elements():
-                filtered_monsters = [monster for monster in self.monster_list[rarity] if monster['element'] == element]
+        if rarity in cls.available_rarities():
+            if element and element in cls.available_elements():
+                filtered_monsters = [monster for monster in cls.monster_list[rarity] if monster['element'] == element]
 
                 if len(filtered_monsters):
                     monster = random.choice(filtered_monsters)
                 else:
                     raise ValueError('This combination of rarity and element does not exist.')
             else:
-               monster = random.choice(self.monster_list[rarity], level = 1)
+               monster = random.choice(cls.monster_list[rarity], level = 1)
 
-        return self(**monster)
+        return cls(**monster)
 
     def __repr__(self):
         return f'{self.name}'

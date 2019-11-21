@@ -19,7 +19,7 @@ class Player:
         self.savepath = Path(f'{self.save_dir}/{self.name}')
 
     @classmethod
-    def interactive(self):
+    def interactive(cls):
         """Provide interactive constructor for player class"""
         while True:
             try:
@@ -28,9 +28,9 @@ class Player:
                 if name.lower() == 'quit':
                     sys.exit()
 
-                savepath = Path(f'{self.save_dir}/{name}')
+                savepath = Path(f'{cls.save_dir}/{name}')
 
-                if self.save_exists(self, savepath):
+                if cls.save_exists(cls, savepath):
                     response = None
 
                     while not response in ['l', 'o', 's']:
@@ -45,7 +45,7 @@ class Player:
                             pass
 
                     if response == 'l':
-                        player = self.load_player(self, savepath)
+                        player = cls.load_player(cls, savepath)
                         return player
 
                     if response == 's':
@@ -54,11 +54,11 @@ class Player:
 
                 print(f"\nWelcome, {name}!  Now it's time to select your monsterly companion...\n")
 
-                monster = self.select_monster()
+                monster = cls.select_monster()
                 print(f'\nYou have selected the {monster.name}!')
 
                 if name and monster:
-                        return self(name, monster)
+                        return cls(name, monster)
             
             except KeyboardInterrupt:
                 sys.exit()
