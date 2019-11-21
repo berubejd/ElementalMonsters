@@ -2,6 +2,7 @@
 
 import textwrap
 import random
+import sys
 
 from os import name
 from os import system
@@ -55,7 +56,7 @@ def present_town_menu(player: Player) -> str:
             response = response[0].lower()
 
         except KeyboardInterrupt:
-            quit()
+            sys.exit()
             
         except:
             pass
@@ -126,7 +127,7 @@ def hunting(player: Player) -> tuple:
                 response = response.lower()
 
             except KeyboardInterrupt:
-                quit()
+                sys.exit()
                 
             except:
                 pass
@@ -138,6 +139,7 @@ def hunting(player: Player) -> tuple:
                 bounty = wins * 5
                 player.gold += bounty
                 print(f'You have earned {bounty} gold in bounties!')
+                player.save_player()
                 
             sleep(3)
             hunt = False
@@ -179,7 +181,7 @@ def combat(player: Player, monster: Monster) -> str:
                 response = response.lower()
 
             except KeyboardInterrupt:
-                quit()
+                sys.exit()
                 
             except:
                 pass
@@ -200,6 +202,7 @@ def combat(player: Player, monster: Monster) -> str:
 
                     if player.monster.gain_xp(5):
                         print(f'\nCongratulations! Your monster has grown stronger!')
+                        player.save_player()
 
                     return 'Won'
                 else:
@@ -254,7 +257,7 @@ def healer(player: Player) -> None:
     try:
         input("Press ENTER to continue... ")
     except KeyboardInterrupt:
-        quit()
+        sys.exit()
 
 def monster_info(player) -> None:
     monster = player.monster
@@ -289,6 +292,9 @@ def main():
     present_header()
     player = Player.interactive()
 
+    if not player.save_exists():
+        player.save_player()
+
     print("Now that you have been introduced, let's head into town", end='', flush=True)
 
     for _ in range(5):
@@ -300,7 +306,8 @@ def main():
 
         if action == 'q':
             print(f'\nYou\'ve won {player_wins} of {player_battles} battles this session!')
-            exit()
+            player.save_player()
+            return
 
         if action == 'h':
             if player.monster.current_hp == 0:

@@ -12,12 +12,20 @@ A visual representation of their interation is below:
 
 ![Interactions](types.png)
 
-## TODO
+
+### TODO
 
  - [ ] Draw if missed three times in a row by both monsters *May no longer be necessary?*
- - [ ] Save / Load
- - [ ] Buff implementation
+ - [X] Save / Load
+ - [ ] Buff implementation (Move healing to a buff.  Give to level 1 monsters rather than purchase.)
  - [x] Block 0 health pets from going to hunt
  - [x] Make initial monster selection and stables view consistent
-
  - [x] Complete re-implementation of combat system
+ - [ ] Enable player to capture defeated monsters
+ - [x] Save at additional places in the game loop (After creation, leveling up, returning from hunting)
+ 
+ Also:
+
+ - [ ] Refactor player class
+
+ 
