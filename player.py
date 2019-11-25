@@ -4,6 +4,7 @@ import os
 import pickle
 import random
 import sys
+from datetime import datetime
 from pathlib import Path
 from monster import Monster
 
@@ -12,9 +13,11 @@ class Player:
     save_dir = 'player_saves'
 
     def __init__(self, name: str, monster: Monster):
+        self.created = datetime.now()
         self.name = name
         self.monster = monster
         self.gold = 0
+        self.blessing = datetime.now()
 
         self.savepath = Path(f'{self.save_dir}/{self.name}')
 

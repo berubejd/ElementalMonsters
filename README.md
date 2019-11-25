@@ -15,9 +15,8 @@ A visual representation of their interation is below:
 
 ### TODO
 
- - [ ] Draw if missed three times in a row by both monsters *May no longer be necessary?*
- - [X] Save / Load
- - [ ] Buff implementation (Move healing to a buff.  Give to level 1 monsters rather than purchase.)
+ - [x] Save / Load
+ - [x] Buff implementation (Move healing to a buff.  Give to level 1 monsters rather than purchase.)
  - [x] Block 0 health pets from going to hunt
  - [x] Make initial monster selection and stables view consistent
  - [x] Complete re-implementation of combat system
@@ -27,5 +26,6 @@ A visual representation of their interation is below:
  Also:
 
  - [ ] Refactor player class
+ - [ ] Refactor main program (Move input handling and "menu" output to functions)
 
  

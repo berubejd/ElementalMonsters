@@ -10,6 +10,8 @@ from time import sleep
 
 from monster import Monster
 from player import Player
+from datetime import datetime
+from datetime import timedelta
 
 indent = ' ' * 6
 
@@ -85,7 +87,7 @@ def hunting(player: Player) -> tuple:
         # Determine if a monster is encountered or if the player will rest
         if random.randint(1, 100) <= 5:
             print(f'{"Nothing.  You take this opportunity to rest.":^60}\n')
-            player.monster.healing(3)
+            player.monster.current_hp = player.monster.hp
             result = 'Rested'
 
         else:
@@ -122,7 +124,7 @@ def hunting(player: Player) -> tuple:
                 current_hp = f'{player.monster.current_hp} / {player.monster.hp}'
                 current_xp = f'{player.monster.experience} / {player.monster.experience_needed}'
 
-                print(f'\n[ {player.monster.name} - Level: {player.monster.level} - Exp: {current_xp} - Health: {current_hp} ]')
+                print(f'\n[ {player.monster.name} - Level: {player.monster.level} - Exp: {current_xp} - Health: {current_hp} {"- Healing " if player.blessing > datetime.now() else ""}]')
                 response = input('Would you like to continue (H)unting or (Q)uit for town? ')
                 response = response.lower()
 
@@ -177,7 +179,7 @@ def combat(player: Player, monster: Monster) -> str:
 
         while not response in [ 'f', 'h', 'r' ]:
             try:
-                response = input('Would you like to (F)ight, (H)eal, or (R)un? ')
+                response = input(f'Would you like to (F)ight{", (H)eal," if player.blessing > datetime.now() else ""} or (R)un? ')
                 response = response.lower()
 
             except KeyboardInterrupt:
@@ -228,10 +230,11 @@ def combat(player: Player, monster: Monster) -> str:
                     print('.')
 
         if response == 'h':
-            healing = random.randint(1, 3)
-            print(f'You healed your {companion.name} for {healing} health.')
+            if player.blessing > datetime.now():
+                healing = random.randint(1, 3)
+                print(f'You healed your {companion.name} for {healing} health.')
 
-            companion.healing(healing)
+                companion.healing(healing)
 
         if response == 'r':
             # Monster gets a free hit on the way out
@@ -259,19 +262,61 @@ def combat(player: Player, monster: Monster) -> str:
 
 def healer(player: Player) -> None:
     healing_text = 'The sanctuary towers above the surrounding buildings like a gray skeletal finger pointing at the gods.  The heat, smoke, and scents of smouldering herbs envelope you as you pass through the large blackened oak doors and you feel like they are trying to drag you down to the cool stone floor.  Glimmering gold, silver, and gems, sparkling in the scant light, remind you that the services offered here don\'t come cheap.'
-    menu = (
+    healing_intro = (
         f'Santuary of the Blind God\n'
         f'\n'
         f'{textwrap.fill(healing_text, width=70)}\n'
-        f'\n'
-        f'{"Just being in this place you and your companion feel more rested." if player.monster.current_hp < player.monster.hp else ""}\n'
-        f'{"You are unable to afford their blessings..." if player.gold < 100 else "A figure can barely be seen but beckonds you forward."}\n'
     )
-
-    clear_screen()
-    print(menu)
+    monster_healed = (
+        f'Just being in this place you and your companion feel more rested.\n'
+        f'\n'
+        'Your {} has been completely healed!\n'.format(player.monster.name).center(70)
+    )
+    healing_blessing = 'A figure can barely be seen but beckons you forward.  In hushed tones the priest explains that for 40g he can provide you a blessing of healing which will allow you to heal your pet in the wilderness.'
+    healing_level1 = 'Since your companion is young and going to help the village, the priest extends his blessing for free, however.'
     
-    player.monster.current_hp = player.monster.hp
+    clear_screen()
+    print(healing_intro)
+
+    if player.monster.current_hp < player.monster.hp:
+        print(monster_healed)
+
+        player.monster.current_hp = player.monster.hp
+
+    print(f'{textwrap.fill(healing_blessing, width=70)}\n')
+
+    if player.blessing > datetime.now():
+        minutes, seconds = divmod((player.blessing - datetime.now()).seconds, 60)
+        print(f'You have {str(minutes) + " minutes and" if minutes > 0 else ""} {seconds} seconds remaining of your blessing.\n')
+
+    else:    
+        if player.monster.level == 1:
+            print(f'{textwrap.fill(healing_level1, width=70)}\n')
+            player.blessing = datetime.now() + timedelta(minutes=10)
+
+        elif player.gold >= 40:
+            response = None
+
+            while not response in [ 'y', 'n' ]:
+                try:
+                    response = input(f'Would you like to purchase this blessing? [ {player.gold} available ] (Y/N) ')
+                    response = response.lower()
+
+                except KeyboardInterrupt:
+                    sys.exit()
+                    
+                except:
+                    pass
+
+                if response == 'y':
+                    player.gold -= 40
+                    player.blessing = datetime.now() + timedelta(minutes=10)
+
+                    print()
+                    print(f'{"You feel a warmth rush over you!":^70}\n')
+
+        else:
+            print(f'You are unable to afford their blessings...\n')
 
     try:
         input("Press ENTER to continue... ")
@@ -314,6 +359,7 @@ def main():
     if not player.save_exists():
         player.save_player()
 
+    print()
     print("Now that you have been introduced, let's head into town", end='', flush=True)
 
     for _ in range(5):
