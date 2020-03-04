@@ -5,8 +5,9 @@ import random
 from collections import defaultdict
 from math import trunc
 
-DMGMODIFIERS = 'dmgmodifiers.csv'
-MONSTERDATA = 'monsterdata.csv'
+DMGMODIFIERS = "dmgmodifiers.csv"
+MONSTERDATA = "monsterdata.csv"
+
 
 class Monster:
 
@@ -24,8 +25,8 @@ class Monster:
 
         with open(DMGMODIFIERS) as fp:
             for line in csv.DictReader(fp):
-                element_type = line['type']
-                del line['type']
+                element_type = line["type"]
+                del line["type"]
 
                 mods[element_type] = line
 
@@ -41,13 +42,23 @@ class Monster:
 
         with open(MONSTERDATA) as fp:
             for line in csv.DictReader(fp):
-                monsters[line['rarity']].append(line)
+                monsters[line["rarity"]].append(line)
 
         return monsters
 
     monster_list = load_monsters()
 
-    def __init__(self, name: str, element: str, description: str = '', tier: int = 1 , level: int = 1, rarity: str = 'Common', strength: int = 1, defense: int = 1):
+    def __init__(
+        self,
+        name: str,
+        element: str,
+        description: str = "",
+        tier: int = 1,
+        level: int = 1,
+        rarity: str = "Common",
+        strength: int = 1,
+        defense: int = 1,
+    ):
         # Basic information
         self.name = name
         self.description = description
@@ -70,7 +81,10 @@ class Monster:
         self.armor = self.BASE_DEFENSE + self.defense
 
         # Hit Points
-        self.hp = sum(random.randint(self.MIN_HP_PER_LEVEL, self.MAX_HP_PER_LEVEL) for _ in range(self.level))
+        self.hp = sum(
+            random.randint(self.MIN_HP_PER_LEVEL, self.MAX_HP_PER_LEVEL)
+            for _ in range(self.level)
+        )
         self.current_hp = self.hp
 
     @classmethod
@@ -85,31 +99,54 @@ class Monster:
         return cls(**random.choice(cls.monster_list[rarity]), level=level)
 
     @classmethod
-    def random_monster_filter(cls, rarity: str = 'Common', element: str = None, level: int = 1):
+    def random_monster_filter(
+        cls, rarity: str = "Common", element: str = None, level: int = 1
+    ):
         """Given a rarity, which defaults to 'Common', and an optional element type
            return a monster from the monster_list"""
 
         if rarity in cls.available_rarities():
             if element and element in cls.available_elements():
-                filtered_monsters = [monster for monster in cls.monster_list[rarity] if monster['element'] == element]
+                filtered_monsters = [
+                    monster
+                    for monster in cls.monster_list[rarity]
+                    if monster["element"] == element
+                ]
 
                 if len(filtered_monsters):
                     monster = random.choice(filtered_monsters)
                 else:
-                    raise ValueError('This combination of rarity and element does not exist.')
+                    raise ValueError(
+                        "This combination of rarity and element does not exist."
+                    )
             else:
-               monster = random.choice(cls.monster_list[rarity], level = 1)
+                monster = random.choice(cls.monster_list[rarity])
 
-        return cls(**monster)
+            return cls(**monster, level=level)
+
+        else:
+            raise ValueError(f"Rarity '{rarity}' is not one of {cls.available_rarities()}")
 
     def __repr__(self):
-        return f'{self.name}'
+        return f"{self.name}"
 
     def attack_target(self, target) -> int:
         """Return the amount of damage inflicted to 'target' based upon monster and target's stats and element"""
 
         # Bases loosely on Basic D&D 5.1
-        return max(0, round((sum(random.randint(1,self.attack) for _ in range(self.tier)) * float(self.element_modifiers[self.element][target.element])))) if random.randint(1, 20) + self.str_mod > target.armor else 0
+        return (
+            max(
+                0,
+                round(
+                    (
+                        sum(random.randint(1, self.attack) for _ in range(self.tier))
+                        * float(self.element_modifiers[self.element][target.element])
+                    )
+                ),
+            )
+            if random.randint(1, 20) + self.str_mod > target.armor
+            else 0
+        )
 
     def damage_taken(self, dmg_amount: int) -> int:
         """Track and determine the affects of damage taken returning remaining hit points"""
@@ -120,7 +157,7 @@ class Monster:
 
     def healing(self, healing_amount: int) -> int:
         """Heal damage that may have been taken previously and return adjusted hit points"""
-        
+
         self.current_hp = min(self.current_hp + healing_amount, self.hp)
 
         return self.current_hp
@@ -168,7 +205,7 @@ class Monster:
             self.attack = self.BASE_DMG + self.str_mod
 
     @staticmethod
-    def get_experience_needed(level:int) -> int:
+    def get_experience_needed(level: int) -> int:
         """Calculate the experience required to gain a level - Source GDQuest"""
 
         return int(level ** 1.8 + level * 4 + 8)
